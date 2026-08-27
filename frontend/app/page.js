@@ -27,6 +27,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+const BASE_PATH = "/velocity_webtech_solution";
+
 const services = [
   {
     title: "Website Development",
@@ -181,7 +183,7 @@ export default function Home() {
           aria-label="Velocity Webtech Solution home"
         >
           <Image
-            src="/image/logo.png"
+            src={`${BASE_PATH}/image/logo.png`}
             alt="Velocity Webtech Solution logo"
             width={54}
             height={54}
@@ -254,7 +256,7 @@ export default function Home() {
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
         <Image
-          src="/image/banner_new.png"
+          src={`${BASE_PATH}/image/banner_new.png`}
           alt="Velocity Webtech digital solutions banner"
           className="hero-bg"
           width={1942}
@@ -491,7 +493,7 @@ export default function Home() {
           </motion.div>
           <div className="brochure-frame">
             <Image
-              src="/image/Brochure.png"
+              src={`${BASE_PATH}/image/Brochure.png`}
               alt="Velocity Webtech services brochure"
               width={1536}
               height={1024}
@@ -626,7 +628,7 @@ export default function Home() {
         <div className="footer-inner">
           <div className="footer-brand">
             <Image
-              src="/image/logo.png"
+              src={`${BASE_PATH}/image/logo.png`}
               alt="Velocity Webtech Solution logo"
               width={64}
               height={64}
@@ -651,10 +653,10 @@ export default function Home() {
 
           <div className="footer-column">
             <h4>Services</h4>
-            <a href="/#services">Website Development</a>
-            <a href="/#services">Mobile App Development</a>
-            <a href="/#services">Custom Software</a>
-            <a href="/#services">E-commerce</a>
+            <a href="#services">Website Development</a>
+            <a href="#services">Mobile App Development</a>
+            <a href="#services">Custom Software</a>
+            <a href="#services">E-commerce</a>
           </div>
 
           <div className="footer-column">

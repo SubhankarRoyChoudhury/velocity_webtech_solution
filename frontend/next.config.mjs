@@ -1,8 +1,22 @@
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//   images: {
+//     formats: ["image/avif", "image/webp"],
+//   },
+// };
+
+// export default nextConfig;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
+
   images: {
-    formats: ["image/avif", "image/webp"]
-  }
+    unoptimized: true,
+  },
+
+  basePath: "/velocity_webtech_solution",
+  assetPrefix: "/velocity_webtech_solution/",
 };
 
 export default nextConfig;
