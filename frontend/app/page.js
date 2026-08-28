@@ -98,7 +98,10 @@ const heroFeatures = [
 const techChips = [
   "Next.js",
   "React",
+  "React Native",
+  "Flutter",
   "Django",
+  "PostgreSQL",
   "RestAPI",
   "FastAPI",
   "AWS Cloud",
@@ -224,13 +227,13 @@ export default function Home() {
 
   function showPreviousDeveloper() {
     setActiveDeveloper((current) =>
-      current === 0 ? developers.length - 1 : current - 1
+      current === 0 ? developers.length - 1 : current - 1,
     );
   }
 
   function showNextDeveloper() {
     setActiveDeveloper((current) =>
-      current === developers.length - 1 ? 0 : current + 1
+      current === developers.length - 1 ? 0 : current + 1,
     );
   }
 
@@ -264,7 +267,7 @@ export default function Home() {
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
+      "(prefers-reduced-motion: reduce)",
     ).matches;
 
     if (reduceMotion) {
@@ -273,7 +276,7 @@ export default function Home() {
 
     const slideTimer = window.setInterval(() => {
       setActiveDeveloper((current) =>
-        current === developers.length - 1 ? 0 : current + 1
+        current === developers.length - 1 ? 0 : current + 1,
       );
     }, 3500);
 
