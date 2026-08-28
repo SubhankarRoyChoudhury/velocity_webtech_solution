@@ -291,48 +291,12 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  async function handleContactSubmit(event) {
+  function handleContactSubmit(event) {
     event.preventDefault();
-    setSubmitting(true);
-    setContactStatus({ type: "", message: "" });
-
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const payload = {
-      name: formData.get("name"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      service: formData.get("service"),
-      message: formData.get("message"),
-    };
-
-    try {
-      const response = await fetch(`${BASE_PATH}/api/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Unable to submit contact form.");
-      }
-
-      form.reset();
-      setContactStatus({
-        type: "success",
-        message: "Thank you. Your message has been saved.",
-      });
-    } catch (error) {
-      setContactStatus({
-        type: "error",
-        message: error.message || "Unable to submit contact form.",
-      });
-    } finally {
-      setSubmitting(false);
-    }
+    setContactStatus({
+      type: "success",
+      message: "This contact form is currently not connected to a backend.",
+    });
   }
 
   return (
