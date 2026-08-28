@@ -274,7 +274,7 @@ export default function Home() {
             <Sparkles size={18} />
             Software Development Services
           </motion.p>
-          <motion.h1 variants={fadeUp}>Velocity Webtech Solution</motion.h1>
+          <motion.h2 variants={fadeUp}>Velocity Webtech Solution</motion.h2>
           <motion.p className="hero-copy" variants={fadeUp}>
             Reliable and innovative digital solutions that help businesses grow
             with modern, scalable, secure, and tailored software.
@@ -563,8 +563,8 @@ export default function Home() {
             </p>
             <h2>Let&apos;s build something amazing together.</h2>
             <p>
-              Tell us what you want to build, and we will help you shape it
-              into a modern, scalable, and launch-ready digital solution.
+              Tell us what you want to build, and we will help you shape it into
+              a modern, scalable, and launch-ready digital solution.
             </p>
             <div className="contact-actions">
               <a href="tel:9674700201">
@@ -586,12 +586,20 @@ export default function Home() {
               </label>
               <label>
                 Phone Number
-                <input type="tel" name="phone" placeholder="Enter phone number" />
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Enter phone number"
+                />
               </label>
             </div>
             <label>
               Email Address
-              <input type="email" name="email" placeholder="Enter email address" />
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter email address"
+              />
             </label>
             <label>
               Service Required
@@ -610,11 +618,18 @@ export default function Home() {
             </label>
             <label>
               Project Details
-              <textarea name="message" placeholder="Tell us about your project" rows={5} />
+              <textarea
+                name="message"
+                placeholder="Tell us about your project"
+                rows={5}
+              />
             </label>
             <motion.button
               type="submit"
-              whileHover={{ y: -3, boxShadow: "0 22px 45px rgba(0, 126, 255, 0.34)" }}
+              whileHover={{
+                y: -3,
+                boxShadow: "0 22px 45px rgba(0, 126, 255, 0.34)",
+              }}
               whileTap={{ scale: 0.97 }}
             >
               Send Message
