@@ -291,7 +291,7 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  async function handleContactSubmit(event) {
+  function handleContactSubmit(event) {
     event.preventDefault();
     setSubmitting(true);
     setContactStatus({ type: "", message: "" });
@@ -306,33 +306,26 @@ export default function Home() {
       message: formData.get("message"),
     };
 
-    try {
-      const response = await fetch(`${BASE_PATH}/api/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
+    const subject = `Project enquiry from ${payload.name}`;
+    const body = [
+      `Full Name: ${payload.name}`,
+      `Phone Number: ${payload.phone}`,
+      `Email Address: ${payload.email}`,
+      `Service Required: ${payload.service}`,
+      "",
+      "Project Details:",
+      payload.message,
+    ].join("\n");
 
-      if (!response.ok) {
-        throw new Error(data.message || "Unable to submit contact form.");
-      }
+    window.location.href = `mailto:velocitywebtechsolution@gmail.com?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
 
-      form.reset();
-      setContactStatus({
-        type: "success",
-        message: "Thank you. Your message has been saved.",
-      });
-    } catch (error) {
-      setContactStatus({
-        type: "error",
-        message: error.message || "Unable to submit contact form.",
-      });
-    } finally {
-      setSubmitting(false);
-    }
+    setContactStatus({
+      type: "success",
+      message: "Your email app is ready with the project details.",
+    });
+    setSubmitting(false);
   }
 
   return (
