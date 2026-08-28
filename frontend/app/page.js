@@ -2,16 +2,19 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Header from "../components/header/page";
 import {
   ArrowRight,
+  ArrowUp,
   BadgeCheck,
+  ChevronLeft,
+  ChevronRight,
   Code2,
   Cloud,
   Database,
   Globe2,
   Layers3,
   Mail,
-  Menu,
   MessageCircle,
   PenTool,
   Phone,
@@ -22,10 +25,9 @@ import {
   Smartphone,
   Sparkles,
   Users,
-  X,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const BASE_PATH = "/velocity_webtech_solution";
 
@@ -150,10 +152,50 @@ const aboutMetrics = [
   { value: "03", label: "Reliable launch" },
 ];
 
+const developers = [
+  {
+    name: "Rohan Sen",
+    designation: "Frontend Developer",
+    image: `${BASE_PATH}/image/developers/developer-1.svg`,
+    skills: ["React", "Next.js", "UI Animation"],
+  },
+  {
+    name: "Priya Sharma",
+    designation: "Backend Developer",
+    image: `${BASE_PATH}/image/developers/developer-2.svg`,
+    skills: ["APIs", "Database", "Security"],
+  },
+  {
+    name: "Arjun Mehta",
+    designation: "Mobile App Developer",
+    image: `${BASE_PATH}/image/developers/developer-3.svg`,
+    skills: ["Android", "iOS", "App UX"],
+  },
+  {
+    name: "Nisha Roy",
+    designation: "UI/UX Designer",
+    image: `${BASE_PATH}/image/developers/developer-4.svg`,
+    skills: ["Wireframes", "Design System", "Prototype"],
+  },
+  {
+    name: "Sayan Das",
+    designation: "Cloud Engineer",
+    image: `${BASE_PATH}/image/developers/developer-5.svg`,
+    skills: ["Hosting", "CI/CD", "Monitoring"],
+  },
+  {
+    name: "Ananya Gupta",
+    designation: "Full Stack Developer",
+    image: `${BASE_PATH}/image/developers/developer-6.svg`,
+    skills: ["Frontend", "Backend", "Deployment"],
+  },
+];
+
 const navItems = [
   { label: "Home", href: "#home" },
   { label: "Services", href: "#services" },
   { label: "About", href: "#about" },
+  { label: "Portfolio", href: "#portfolio" },
   { label: "Contact Us", href: "#contact" },
 ];
 
@@ -172,77 +214,130 @@ const staggerGroup = {
 };
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
+  const [contactStatus, setContactStatus] = useState({
+    type: "",
+    message: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [activeDeveloper, setActiveDeveloper] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  function showPreviousDeveloper() {
+    setActiveDeveloper((current) =>
+      current === 0 ? developers.length - 1 : current - 1
+    );
+  }
+
+  function showNextDeveloper() {
+    setActiveDeveloper((current) =>
+      current === developers.length - 1 ? 0 : current + 1
+    );
+  }
+
+  function getDeveloperSlideClass(index) {
+    const previous =
+      activeDeveloper === 0 ? developers.length - 1 : activeDeveloper - 1;
+    const next =
+      activeDeveloper === developers.length - 1 ? 0 : activeDeveloper + 1;
+
+    if (index === activeDeveloper) {
+      return "active";
+    }
+
+    if (index === previous) {
+      return "previous";
+    }
+
+    if (index === next) {
+      return "next";
+    }
+
+    return "hidden";
+  }
+
+  function scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) {
+      return undefined;
+    }
+
+    const slideTimer = window.setInterval(() => {
+      setActiveDeveloper((current) =>
+        current === developers.length - 1 ? 0 : current + 1
+      );
+    }, 3500);
+
+    return () => window.clearInterval(slideTimer);
+  }, []);
+
+  useEffect(() => {
+    function handleScroll() {
+      setShowScrollTop(window.scrollY > 360);
+    }
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  async function handleContactSubmit(event) {
+    event.preventDefault();
+    setSubmitting(true);
+    setContactStatus({ type: "", message: "" });
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      name: formData.get("name"),
+      phone: formData.get("phone"),
+      email: formData.get("email"),
+      service: formData.get("service"),
+      message: formData.get("message"),
+    };
+
+    try {
+      const response = await fetch(`${BASE_PATH}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to submit contact form.");
+      }
+
+      form.reset();
+      setContactStatus({
+        type: "success",
+        message: "Thank you. Your message has been saved.",
+      });
+    } catch (error) {
+      setContactStatus({
+        type: "error",
+        message: error.message || "Unable to submit contact form.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <main>
-      <header className="site-header">
-        <a
-          className="brand"
-          href="#home"
-          aria-label="Velocity Webtech Solution home"
-        >
-          <Image
-            src={`${BASE_PATH}/image/logo.png`}
-            alt="Velocity Webtech Solution logo"
-            width={54}
-            height={54}
-            priority
-          />
-          <span>Velocity Webtech Solution</span>
-        </a>
-
-        <nav className="desktop-nav" aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <motion.a
-              key={item.href}
-              href={item.href}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.96 }}
-            >
-              {item.label}
-            </motion.a>
-          ))}
-        </nav>
-
-        <motion.a
-          className="header-cta"
-          href="#contact"
-          whileHover={{ y: -2, scale: 1.02 }}
-          whileTap={{ scale: 0.96 }}
-        >
-          <MessageCircle size={18} />
-          Get Started
-        </motion.a>
-
-        <button
-          className="menu-button"
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
-
-        {open && (
-          <motion.nav
-            className="mobile-nav"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            aria-label="Mobile navigation"
-          >
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
-          </motion.nav>
-        )}
-      </header>
+      <Header />
 
       <section id="home" className="hero">
         <motion.div
@@ -395,26 +490,45 @@ export default function Home() {
           </h2>
         </motion.div>
 
-        <div className="service-grid">
+        <motion.div
+          className="service-grid"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.18 }}
+          variants={staggerGroup}
+        >
           {services.map(({ title, text, icon: Icon, tone }, index) => (
             <motion.article
               className={`service-card ${tone}`}
               key={title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.25 }}
+              variants={fadeUp}
               transition={{ delay: index * 0.05, duration: 0.45 }}
-              whileHover={{ y: -8, scale: 1.015 }}
+              whileHover={{
+                y: -10,
+                rotateX: 4,
+                rotateY: index % 2 === 0 ? -4 : 4,
+                scale: 1.02,
+              }}
             >
               <span className="card-shine" />
-              <div className="service-icon">
-                <Icon size={28} />
+              <span className="service-card-glow" />
+              <div className="service-card-top">
+                <div className="service-icon">
+                  <Icon size={28} />
+                </div>
+                <span className="service-index">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
               <h3>{title}</h3>
               <p>{text}</p>
+              <div className="service-card-footer">
+                <span>Build With Us</span>
+                <ArrowRight size={17} />
+              </div>
             </motion.article>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <section id="about" className="section about-section">
@@ -510,6 +624,122 @@ export default function Home() {
         </motion.div>
       </section>
 
+      <section id="portfolio" className="section developer-portfolio-section">
+        <motion.div
+          className="section-heading centered"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+        >
+          <p className="eyebrow">
+            <Users size={18} />
+            Developer Portfolio
+          </p>
+          <h2>Meet the developers behind our digital solutions.</h2>
+        </motion.div>
+
+        <motion.div
+          className="developer-slider"
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.55 }}
+        >
+          <button
+            className="slider-control"
+            type="button"
+            onClick={showPreviousDeveloper}
+            aria-label="Previous developer"
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          <div className="developer-carousel-stage">
+            {developers.map(({ name, designation, image, skills }, index) => (
+              <motion.article
+                className={`developer-slide ${getDeveloperSlideClass(index)}`}
+                key={name}
+                animate={getDeveloperSlideClass(index)}
+                variants={{
+                  active: {
+                    x: 0,
+                    z: 80,
+                    rotateY: 0,
+                    scale: 1,
+                    opacity: 1,
+                  },
+                  previous: {
+                    x: "-48%",
+                    z: -80,
+                    rotateY: 24,
+                    scale: 0.82,
+                    opacity: 0.58,
+                  },
+                  next: {
+                    x: "48%",
+                    z: -80,
+                    rotateY: -24,
+                    scale: 0.82,
+                    opacity: 0.58,
+                  },
+                  hidden: {
+                    x: 0,
+                    z: -180,
+                    rotateY: 0,
+                    scale: 0.72,
+                    opacity: 0,
+                  },
+                }}
+                transition={{ duration: 0.55, ease: "easeInOut" }}
+              >
+                <span className="developer-number">0{index + 1}</span>
+                <div className="developer-photo-wrap">
+                  <Image
+                    src={image}
+                    alt={`${name} profile`}
+                    width={320}
+                    height={320}
+                  />
+                </div>
+                <div className="developer-copy">
+                  <span className="developer-kicker">Team Member</span>
+                  <h3>{name}</h3>
+                  <p>{designation}</p>
+                  <div className="developer-skills">
+                    {skills.map((skill) => (
+                      <span key={skill}>{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+
+          <button
+            className="slider-control"
+            type="button"
+            onClick={showNextDeveloper}
+            aria-label="Next developer"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </motion.div>
+
+        <div className="developer-slider-dots" aria-label="Developer slides">
+          {developers.map((developer, index) => (
+            <button
+              key={developer.name}
+              className={index === activeDeveloper ? "active" : ""}
+              type="button"
+              onClick={() => setActiveDeveloper(index)}
+              aria-label={`Show ${developer.name}`}
+              aria-current={index === activeDeveloper}
+            />
+          ))}
+        </div>
+      </section>
+
       <section className="section process-section">
         <motion.div
           className="section-heading centered"
@@ -578,11 +808,20 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <motion.form className="contact-form" variants={fadeUp}>
+          <motion.form
+            className="contact-form"
+            variants={fadeUp}
+            onSubmit={handleContactSubmit}
+          >
             <div className="form-row">
               <label>
                 Full Name
-                <input type="text" name="name" placeholder="Enter your name" />
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter your name"
+                  required
+                />
               </label>
               <label>
                 Phone Number
@@ -590,6 +829,7 @@ export default function Home() {
                   type="tel"
                   name="phone"
                   placeholder="Enter phone number"
+                  required
                 />
               </label>
             </div>
@@ -599,11 +839,12 @@ export default function Home() {
                 type="email"
                 name="email"
                 placeholder="Enter email address"
+                required
               />
             </label>
             <label>
               Service Required
-              <select name="service" defaultValue="">
+              <select name="service" defaultValue="" required>
                 <option value="" disabled>
                   Select a service
                 </option>
@@ -622,17 +863,24 @@ export default function Home() {
                 name="message"
                 placeholder="Tell us about your project"
                 rows={5}
+                required
               />
             </label>
+            {contactStatus.message && (
+              <p className={`form-status ${contactStatus.type}`}>
+                {contactStatus.message}
+              </p>
+            )}
             <motion.button
               type="submit"
+              disabled={submitting}
               whileHover={{
                 y: -3,
                 boxShadow: "0 22px 45px rgba(0, 126, 255, 0.34)",
               }}
               whileTap={{ scale: 0.97 }}
             >
-              Send Message
+              {submitting ? "Sending..." : "Send Message"}
               <ArrowRight size={18} />
             </motion.button>
           </motion.form>
@@ -687,6 +935,22 @@ export default function Home() {
           <span>Your Vision, Our Mission.</span>
         </div>
       </footer>
+
+      {showScrollTop && (
+        <motion.button
+          className="scroll-top-button"
+          type="button"
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+          initial={{ opacity: 0, y: 16, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.9 }}
+          whileHover={{ y: -4, scale: 1.05 }}
+          whileTap={{ scale: 0.94 }}
+        >
+          <ArrowUp size={22} />
+        </motion.button>
+      )}
     </main>
   );
 }

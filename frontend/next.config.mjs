@@ -9,14 +9,11 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
-
   images: {
     unoptimized: true,
   },
 
   basePath: "/velocity_webtech_solution",
-  assetPrefix: "/velocity_webtech_solution/",
 };
 
 export default nextConfig;
