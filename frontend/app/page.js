@@ -155,43 +155,46 @@ const aboutMetrics = [
   { value: "03", label: "Reliable launch" },
 ];
 
+const developerImage = (fileName) =>
+  `${BASE_PATH}/image/developers/${fileName}`;
+
 const developers = [
   {
     name: "Rohan Sen",
     designation: "Frontend Developer",
-    image: `${BASE_PATH}/image/developers/developer-1.svg`,
+    image: developerImage("dev_1.avif"),
     skills: ["React", "Next.js", "UI Animation"],
   },
   {
     name: "Priya Sharma",
     designation: "Backend Developer",
-    image: `${BASE_PATH}/image/developers/developer-2.svg`,
+    image: developerImage("dev_3.avif"),
     skills: ["APIs", "Database", "Security"],
   },
   {
     name: "Arjun Mehta",
     designation: "Mobile App Developer",
-    image: `${BASE_PATH}/image/developers/developer-3.svg`,
+    image: developerImage("dev_2.jpg"),
     skills: ["Android", "iOS", "App UX"],
   },
   {
     name: "Nisha Roy",
     designation: "UI/UX Designer",
-    image: `${BASE_PATH}/image/developers/developer-4.svg`,
+    image: developerImage("developer-4.svg"),
     skills: ["Wireframes", "Design System", "Prototype"],
   },
   {
     name: "Sayan Das",
     designation: "Cloud Engineer",
-    image: `${BASE_PATH}/image/developers/developer-5.svg`,
+    image: developerImage("developer-5.svg"),
     skills: ["Hosting", "CI/CD", "Monitoring"],
   },
-  {
-    name: "Ananya Gupta",
-    designation: "Full Stack Developer",
-    image: `${BASE_PATH}/image/developers/developer-6.svg`,
-    skills: ["Frontend", "Backend", "Deployment"],
-  },
+  // {
+  //   name: "Ananya Gupta",
+  //   designation: "Full Stack Developer",
+  //   image: developerImage("developer-6.svg"),
+  //   skills: ["Frontend", "Backend", "Deployment"],
+  // },
 ];
 
 const navItems = [
@@ -224,26 +227,41 @@ export default function Home() {
   const [submitting, setSubmitting] = useState(false);
   const [activeDeveloper, setActiveDeveloper] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const developerCount = developers.length;
+  const lastDeveloperIndex = Math.max(developerCount - 1, 0);
+  const activeDeveloperIndex = Math.min(activeDeveloper, lastDeveloperIndex);
 
   function showPreviousDeveloper() {
-    setActiveDeveloper((current) =>
-      current === 0 ? developers.length - 1 : current - 1,
-    );
+    setActiveDeveloper((current) => {
+      if (developerCount === 0) {
+        return 0;
+      }
+
+      return current === 0 ? lastDeveloperIndex : current - 1;
+    });
   }
 
   function showNextDeveloper() {
-    setActiveDeveloper((current) =>
-      current === developers.length - 1 ? 0 : current + 1,
-    );
+    setActiveDeveloper((current) => {
+      if (developerCount === 0) {
+        return 0;
+      }
+
+      return current >= lastDeveloperIndex ? 0 : current + 1;
+    });
   }
 
   function getDeveloperSlideClass(index) {
     const previous =
-      activeDeveloper === 0 ? developers.length - 1 : activeDeveloper - 1;
+      activeDeveloperIndex === 0
+        ? lastDeveloperIndex
+        : activeDeveloperIndex - 1;
     const next =
-      activeDeveloper === developers.length - 1 ? 0 : activeDeveloper + 1;
+      activeDeveloperIndex === lastDeveloperIndex
+        ? 0
+        : activeDeveloperIndex + 1;
 
-    if (index === activeDeveloper) {
+    if (index === activeDeveloperIndex) {
       return "active";
     }
 
@@ -266,6 +284,16 @@ export default function Home() {
   }
 
   useEffect(() => {
+    setActiveDeveloper((current) =>
+      current > lastDeveloperIndex ? lastDeveloperIndex : current,
+    );
+  }, [lastDeveloperIndex]);
+
+  useEffect(() => {
+    if (developerCount === 0) {
+      return undefined;
+    }
+
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -276,12 +304,12 @@ export default function Home() {
 
     const slideTimer = window.setInterval(() => {
       setActiveDeveloper((current) =>
-        current === developers.length - 1 ? 0 : current + 1,
+        current >= lastDeveloperIndex ? 0 : current + 1,
       );
     }, 3500);
 
     return () => window.clearInterval(slideTimer);
-  }, []);
+  }, [developerCount, lastDeveloperIndex]);
 
   useEffect(() => {
     function handleScroll() {
@@ -697,11 +725,11 @@ export default function Home() {
           {developers.map((developer, index) => (
             <button
               key={developer.name}
-              className={index === activeDeveloper ? "active" : ""}
+              className={index === activeDeveloperIndex ? "active" : ""}
               type="button"
               onClick={() => setActiveDeveloper(index)}
               aria-label={`Show ${developer.name}`}
-              aria-current={index === activeDeveloper}
+              aria-current={index === activeDeveloperIndex}
             />
           ))}
         </div>
